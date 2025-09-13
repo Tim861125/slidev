@@ -29,9 +29,7 @@ transition: fade-out
 - 使用 **語義化組件** 來構建響應式郵件
 - 編譯時轉換為高兼容性的 HTML
 
-</v-clicks>
-
-<div grid="~ cols-2 gap-4" v-clicks>
+<div grid="~ cols-2 gap-4" >
 <div>
 
 **❌ 傳統 HTML 郵件痛點**
@@ -54,6 +52,7 @@ transition: fade-out
 </div>
 </div>
 </div>
+</v-clicks>
 
 <style>
 h1 {
@@ -69,44 +68,11 @@ h1 {
 
 ---
 
-# 為什麼需要 MJML？
-
-<div grid="~ cols-2 gap-4">
-<div>
-
-**❌ 傳統 HTML 郵件痛點**
-- 需要使用 table 佈局
-- CSS 內聯化繁瑣
-- 跨平台測試耗時
-- 響應式設計困難
-
-</div>
-<div>
-
-<div class="grid-cols-1 gap-4">
-
-**✅ MJML 解決方案**
-- 語義化組件抽象
-- 自動 CSS 處理
-- 內建跨平台兼容
-- 響應式預設支援
-
-</div>
-</div>
-</div>
-
----
-
 # MJML 技術架構
-
-<div class="flex justify-center mb-8">
-  <div class="bg-gray-100 p-4 rounded-lg">
-    <h3 class="text-center mb-4">編譯流程</h3>
-    <div class="text-center">
-      MJML → AST Parser → Component Tree → HTML Generator → Optimized HTML
-    </div>
-  </div>
-</div>
+## 編譯流程
+```
+MJML → AST Parser → Component Tree → HTML Generator → Optimized HTML
+```
 
 ## 核心技術特點
 

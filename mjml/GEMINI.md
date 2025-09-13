@@ -15,27 +15,27 @@ To get started with the project, follow these steps.
 
 1.  **Install Dependencies:**
     ```bash
-    npm install
+    bun install
     ```
-    *(Note: The README mentions `pnpm` and a `bun.lock` file exists, so `pnpm install` or `bun install` are also valid options.)*
+    *(Note: The README mentions `pbun` and a `bun.lock` file exists, so `pbun install` or `bun install` are also valid options.)*
 
 2.  **Run Development Server:**
     This command starts a local development server with hot-reloading.
     ```bash
-    npm run dev
+    bun run dev
     ```
     You can then view the presentation at `http://localhost:3030`.
 
 3.  **Build for Production:**
     This command builds the presentation into a static website in the `dist/` directory.
     ```bash
-    npm run build
+    bun run build
     ```
 
 4.  **Export Slides:**
     This command can be used to export the slides into PDF or other formats.
     ```bash
-    npm run export
+    bun run export
     ```
 
 ## Development Conventions
