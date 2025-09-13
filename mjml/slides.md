@@ -31,20 +31,28 @@ transition: fade-out
 
 </v-clicks>
 
-<div v-click>
+<div grid="~ cols-2 gap-4" v-clicks>
+<div>
 
-```xml
-<mjml>
-  <mj-body>
-    <mj-section>
-      <mj-column>
-        <mj-text>Hello World!</mj-text>
-      </mj-column>
-    </mj-section>
-  </mj-body>
-</mjml>
-```
+**❌ 傳統 HTML 郵件痛點**
+- 需要使用 table 佈局
+- CSS 內聯化繁瑣
+- 跨平台測試耗時
+- 響應式設計困難
 
+</div>
+<div>
+
+<div class="grid-cols-1 gap-4">
+
+**✅ MJML 解決方案**
+- 語義化組件抽象
+- 自動 CSS 處理
+- 內建跨平台兼容
+- 響應式預設支援
+
+</div>
+</div>
 </div>
 
 <style>
@@ -63,29 +71,19 @@ h1 {
 
 # 為什麼需要 MJML？
 
-## 郵件客戶端的挑戰
-
 <div grid="~ cols-2 gap-4">
 <div>
-
-### 各客戶端限制
-- **Outlook**：使用 Word 渲染引擎，CSS 支援有限
-- **Gmail**：過濾大部分 CSS，不支援媒體查詢
-- **Apple Mail**：WebKit 引擎，支援度較好但仍有限制
-- **行動裝置**：螢幕尺寸差異，觸控操作考量
-
-</div>
-<div>
-
-### 傳統 vs MJML
-
-<div class="grid grid-cols-1 gap-4">
 
 **❌ 傳統 HTML 郵件痛點**
 - 需要使用 table 佈局
 - CSS 內聯化繁瑣
 - 跨平台測試耗時
 - 響應式設計困難
+
+</div>
+<div>
+
+<div class="grid-cols-1 gap-4">
 
 **✅ MJML 解決方案**
 - 語義化組件抽象
