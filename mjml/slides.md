@@ -42,7 +42,7 @@ mdc: true
 <div class="grid-cols-1 gap-4">
 
 **✅ MJML 解決方案**
-- 語義化組件抽象
+- 語義化組件
 - 自動 CSS 處理
 - 內建跨平台兼容
 - 響應式預設支援
@@ -88,6 +88,7 @@ mjml --config.minify true --config.beautify false
 
 ```bash
 <mjml>
+
   <mj-head>
     <mj-title>{{title}}</mj-title>
     <mj-preview>{{abstract}}</mj-preview>
@@ -95,6 +96,7 @@ mjml --config.minify true --config.beautify false
       <mj-all font-family="Microsoft JhengHei, Arial, sans-serif"/>
     </mj-attributes>
   </mj-head>
+
   <mj-body>
     <mj-section>
       <mj-column>
@@ -104,12 +106,13 @@ mjml --config.minify true --config.beautify false
       </mj-column>
     </mj-section>
   </mj-body>
+
 </mjml>
 ```
 
 ---
 
-# 兼容性技術深入
+# 兼容性
 
 | 客戶端 | 渲染引擎 | CSS 支援 |
 |--------|----------|----------|
@@ -194,11 +197,11 @@ mjml --config.minify true --config.beautify false
 
 ---
 
-# 🎯 結論
+# 結論
 
-> MJML 可以大幅減少 email 排版痛苦
-> 但 Outlook (Word engine) 仍是最大相容性挑戰
-> 設計時要 **以最保守結構為主**，確保跨平台一致
+- MJML 可以大幅減少 email 排版痛苦
+- 但 Outlook (Word engine) 仍是最大相容性挑戰
+- 設計時要 **以最保守結構為主**，確保跨平台一致
 
 
 ---
