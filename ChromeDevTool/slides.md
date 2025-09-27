@@ -44,7 +44,7 @@ info: Chrome 內建的開發者工具，前端工程師必備
 
 ---
 
-# 小結與建議
+# 小結
 
 - DevTools 為 Chrome 內建，無需額外安裝  
 - 幾乎所有前端開發流程都會用到  
@@ -55,3 +55,7 @@ info: Chrome 內建的開發者工具，前端工程師必備
   - Performance  
 - 定期用 DevTools 檢查錯誤與效能 → 專業開發者習慣  
 
+---
+
+# Google Chrome DevTools 
+Element 篇
