@@ -21,7 +21,7 @@ info: Chrome 內建的開發者工具，前端工程師必備
 
 ---
 
-![alt text](screenshot.png)
+![alt text](/screenshot.png)
 
 ---
 
