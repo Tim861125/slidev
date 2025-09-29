@@ -112,11 +112,11 @@ Element 篇
 
 <!-- 右側示範按鈕 -->
 <div style="flex: 1;">
-  <button 
+  <button
     style="padding: 12px 24px; border-radius: 6px; background-color: #60a5fa; color: white; cursor: pointer;"
-    onclick="this.innerText='點擊!'"
+    onclick="this.innerText='按下去了!'"
   >
-    示範按鈕
+    按鈕
   </button>
 </div>
 
@@ -142,32 +142,46 @@ Console 篇
 
 # 常用 Console 指令
 
-- `console.log()`：輸出一般訊息  
-- `console.warn()`：黃色警告  
-- `console.error()`：紅色錯誤訊息  
-- `console.table()`：以表格方式顯示陣列 / 物件  
-- `console.dir()`：以物件樹方式顯示 DOM  
+- `console.log()`：輸出一般訊息
+```bash
+console.log("Hello DevTools!");
+```
 
----
+- `console.warn()`：黃色警告
+```bash
+console.warn("這是警告訊息");
+```
 
-# 除錯技巧
+- `console.error()`：紅色錯誤訊息
+```bash
+console.error("這是錯誤訊息");
+```
 
-- 查看變數：直接輸入變數名稱  
-- 使用上下鍵切換輸入歷史  
-- `_` 代表上一次執行結果  
-- `copy(value)`：快速複製結果到剪貼簿  
-- `$0`：代表 Elements 面板目前選取的元素  
-- `$1, $2...`：前幾個選取過的元素  
+- `console.table()`：以表格方式顯示陣列 / 物件
+```bash
+console.table([{name:"Alice", age:25}, {name:"Bob", age:30}]);
+```
 
 ---
 
 # 小技巧
 
-- `clear()`：清空 Console  
-- `filter` 搜尋輸出內容  
+- 使用上下鍵切換輸入歷史
+- `$0`：代表 Elements 面板目前選取的元素
+- `clear()`：清空 Console
 - 搭配 `console.group()` 與 `console.groupEnd()` 整理輸出  
 - 使用 `console.time()` 與 `console.timeEnd()` 測量程式耗時  
-- 方便進行 **效能檢測** 與 **資料比對**  
+- 方便進行 **效能檢測** 與 **資料比對**
+
+
+<div>
+  <button
+    id="demo-btn"
+    style="padding: 12px 24px; border-radius: 6px; background-color: #60a5fa; color: white; cursor: pointer;"
+  >
+    按鈕
+  </button>
+</div>
 
 ---
 
