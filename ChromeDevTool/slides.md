@@ -191,7 +191,27 @@ Source 篇
 
 ---
 
-continue...
+# Source 面板功能
+- 檢視 / 停止 / 執行 JavaScript 原始碼
+- **斷點 (Breakpoints)** 偵錯
+- 模擬程式執行流程，方便追蹤錯誤
+
+---
+
+# 基本操作
+1. 開啟 Source 面板，選取要除錯的檔案  
+2. 點擊行號 → 新增斷點 (Breakpoint)  
+3. 重新整理頁面 → 程式會在該行停下  
+4. 使用上方工具列控制程式流程：  
+   - ▶️ Continue：繼續執行  
+   - ⏭ Step over：逐行執行  
+   - ⏬ Step into：進入函式內部  
+   - ⏫ Step out：跳出函式
+---
+
+# 範例：計算按鈕點擊次數
+
+<SourceExample />
 
 ---
 layout: cover
