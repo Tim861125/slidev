@@ -4,20 +4,20 @@ title: Google Chrome DevTools
 info: Chrome 內建的開發者工具，前端工程師必備
 ---
 
-# Google Chrome DevTools 
+# Google Chrome DevTools
 介紹篇
 
-給網頁開發人員除錯與優化工具  
+給網頁開發人員除錯與優化工具
 
 ---
- 
+
 # 如何開啟 DevTools
 
-- Chrome 主選單 → 更多工具 → 開發人員工具  
-- 右鍵 → **Inspect**  
-- 快捷鍵：  
-  - Mac：`Command + Option + I`  
-  - Windows/Linux：`F12` 或 `Ctrl + Shift + I`  
+- Chrome 主選單 → 更多工具 → 開發人員工具
+- 右鍵 → **Inspect**
+- 快捷鍵：
+  - Mac：`Command + Option + I`
+  - Windows/Linux：`F12` 或 `Ctrl + Shift + I`
 
 ---
 
@@ -27,39 +27,38 @@ info: Chrome 內建的開發者工具，前端工程師必備
 
 # DevTools 主要面板
 
-- **Elements**：顯示 DOM 結構，查看與修改 HTML / CSS  
-- **Console**：顯示錯誤與 log，支援執行 JS 指令  
-- **Network**：Request / Response，分析 API  
-- **Performance**：分析效能、渲染與記憶體  
-- **Application**：查看 Storage、Cookies、Cache  
+- **Elements**：顯示 DOM 結構，查看與修改 HTML / CSS
+- **Console**：顯示錯誤與 log，支援執行 JS 指令
+- **Network**：Request / Response，分析 API
+- **Performance**：分析效能、渲染與記憶體
+- **Application**：查看 Storage、Cookies、Cache
 - **Security**：檢查 HTTPS / 混合內容問題
 
 ---
 
 # 裝置模擬 (Device Mode)
 
-- 模擬不同裝置螢幕尺寸與方向  
-- 測試響應式設計 (Responsive)  
-- 模擬地理定位、感測器（加速度計等）  
+- 模擬不同裝置螢幕尺寸與方向
+- 測試 RWD
 
 ---
 
 # 小結
 
-- DevTools 為 Chrome 內建，無需額外安裝  
-- 幾乎所有前端開發流程都會用到  
-- 建議熟練四大面板：  
-  - Elements  
-  - Console  
-  - Network  
-  - Performance  
-- 定期用 DevTools 檢查錯誤與效能 → 專業開發者習慣  
+- DevTools 為 Chrome 內建，無需額外安裝
+- 幾乎所有前端開發流程都會用到
+- 建議熟練四大面板：
+  - Elements
+  - Console
+  - Source
+  - Network
+- 定期用 DevTools 檢查錯誤與效能 → 專業開發者習慣
 
 ---
 layout: cover
 ---
 
-# Google Chrome DevTools 
+# Google Chrome DevTools
 Element 篇
 
 ---
@@ -126,17 +125,17 @@ Element 篇
 layout: cover
 ---
 
-# Google Chrome DevTools 
+# Google Chrome DevTools
 Console 篇
 
 ---
 
 # Console 面板功能
 
-- 顯示網頁執行過程中的錯誤、警告與訊息  
-- 可輸入並執行 JavaScript 指令  
-- 支援即時測試 API / DOM 操作  
-- 與 Elements、Network 等面板整合，快速取值  
+- 顯示網頁執行過程中的錯誤、警告與訊息
+- 可輸入並執行 JavaScript 指令
+- 支援即時測試 API / DOM 操作
+- 與 Elements、Network 等面板整合，快速取值
 
 ---
 
@@ -169,8 +168,8 @@ console.table([{name:"Alice", age:25}, {name:"Bob", age:30}]);
 - 使用上下鍵切換輸入歷史
 - `$0`：代表 Elements 面板目前選取的元素
 - `clear()`：清空 Console
-- 搭配 `console.group()` 與 `console.groupEnd()` 整理輸出  
-- 使用 `console.time()` 與 `console.timeEnd()` 測量程式耗時  
+- 搭配 `console.group()` 與 `console.groupEnd()` 整理輸出
+- 使用 `console.time()` 與 `console.timeEnd()` 測量程式耗時
 - 方便進行 **效能檢測** 與 **資料比對**
 
 
@@ -184,12 +183,79 @@ console.table([{name:"Alice", age:25}, {name:"Bob", age:30}]);
 </div>
 
 ---
+layout: cover
+---
+
+# Google Chrome DevTools
+Source 篇
+
+---
+
+# Source 面板功能
+
+- 查看專案的 JavaScript / CSS / HTML 原始檔案
+- 設定斷點 (Breakpoints) 進行除錯
+- 監控變數、運算結果與事件監聽器
+
+---
+
+# 斷點 (Breakpoints)
+
+- **行斷點 (Line Breakpoint)**
+  點擊程式碼行號即可暫停在該行
+- **條件斷點 (Conditional Breakpoint)**
+  右鍵 → *Add conditional breakpoint*，輸入判斷式
+- **例外狀況斷點 (Exception Breakpoint)**
+  偵測到錯誤時自動暫停
+- **事件斷點 (Event Listener Breakpoint)**
+  在特定事件 (e.g. click, keydown) 發生時暫停
+
+---
+
+# 除錯流程示範
+
+1. 在程式碼行號設置斷點
+2. 重新整理或觸發程式
+3. 程式執行至斷點 → 自動暫停
+4. 使用右側面板觀察：
+   - **Scope**：區域 / 全域變數
+   - **Call Stack**：目前呼叫的函式堆疊
+   - **Watch**：監控特定表達式
+5. 使用控制工具：
+   - ▶️ Continue：繼續執行
+   - ⏭ Step over：執行下一行
+   - ⏬ Step into：進入函式內部
+   - ⏹ Step out：跳出函式
+
+---
+
+# 即時修改與儲存
+
+- 在 Source 面板直接修改 JS / CSS / HTML
+- 支援 **Live Edit**，立即生效
+- 可與本地檔案做 **Workspace** 綁定
+  - 修改後可直接同步到本機檔案
+- 減少切換編輯器的時間
+
+---
 
 # 小結
 
-- Console = 除錯 & 測試 JS 的最佳工具  
-- 開發過程中，記錄錯誤 / 資料檢查必備  
-- 熟悉 `console.log / warn / error / table` → 提升除錯效率  
-- 靈活搭配 `$0`、`copy()` 等指令，加快開發流程  
+- Source 面板 = **JS 除錯核心工具**
+- 熟悉 **斷點種類** (行、條件、事件、例外)
+- 善用 **Scope / Watch / Call Stack**
+  → 快速找到程式錯誤
+- 建議搭配 **Console** 一起使用
+  → 邊停下來觀察變數，邊測試程式行為
+
 
 ---
+layout: cover
+---
+
+# Google Chrome DevTools
+Network 篇
+
+---
+
+continue...
