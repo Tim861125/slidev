@@ -222,4 +222,40 @@ Network 篇
 
 ---
 
-continue...
+# Network 面板功能
+
+- 監控所有網頁請求 (Request) 與回應 (Response)
+- 分析載入資源：HTML、CSS、JS、圖片、API
+- 偵測請求狀態、回應時間與錯誤
+- 針對效能瓶頸進行優化
+
+---
+
+# 常見應用場景
+
+- **API 除錯**：檢查 Request/Response 是否正確  
+- **效能分析**：找出載入最慢的資源  
+- **資源確認**：圖片、CSS、JS 是否載入成功
+
+---
+
+# 過濾與搜尋
+
+- 可依 **檔案類型** 篩選：JS、CSS、Img、XHR、WS 等  
+- 搜尋特定 Request (支援正規表達式)  
+- 查看範圍內的請求  
+
+---
+
+# 小結
+
+- **Network 面板** = API 與效能除錯必備工具  
+- 熟悉 Headers / Response / Timing 三大區塊  
+- 搭配 Console 與 Source → 掌握前端問題  
+
+---
+layout: cover
+---
+
+# Google Chrome DevTools
+Performance 篇 (Next...)
