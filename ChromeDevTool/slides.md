@@ -165,13 +165,29 @@ console.table([{name:"Alice", age:25}, {name:"Bob", age:30}]);
 # 小技巧
 
 - 使用上下鍵切換輸入歷史
-- `$0`：代表 Elements 面板目前選取的元素
 - `clear()`：清空 Console
 - 搭配 `console.group()` 與 `console.groupEnd()` 整理輸出
+```
+console.group()
+console.log("hello")
+console.log("world")
+console.groupEnd()
+```
 - 使用 `console.time()` 與 `console.timeEnd()` 測量程式耗時
+```
+console.time()
+for(var i = 0; i < 9999; i++ ){}
+console.timeEnd()
+```
+
+---
+
+# 小技巧
+
+- `$0`：代表 Elements 面板目前選取的元素
 - 方便進行 **效能檢測** 與 **資料比對**
 
-
+<br>
 <div>
   <button
     id="demo-btn"
@@ -251,10 +267,3 @@ Network 篇
 - **Network 面板** = API 與效能除錯必備工具
 - 熟悉 Headers / Response / Timing 三大區塊
 - 搭配 Console 與 Source → 掌握前端問題
-
----
-layout: cover
----
-
-# Google Chrome DevTools
-Performance 篇 (Next...)
