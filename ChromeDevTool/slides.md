@@ -76,7 +76,6 @@ Element 篇
 
 - **Styles** 窗格：顯示選定元素的 CSS 規則
 - 即時新增、修改、停用 CSS 屬性
-- 查看 CSS 盒模型 (Box Model)
 - 強制設定元素狀態 (e.g. `:hover`)
 - `.cls` 按鈕可以新增 class
 
@@ -192,20 +191,20 @@ Source 篇
 ---
 
 # Source 面板功能
-- 檢視 / 停止 / 執行 JavaScript 原始碼
+- 查看 / 停止 / 執行 JavaScript 原始碼
 - **斷點 (Breakpoints)** 偵錯
 - 模擬程式執行流程，方便追蹤錯誤
 
 ---
 
 # 基本操作
-1. 開啟 Source 面板，選取要除錯的檔案  
-2. 點擊行號 → 新增斷點 (Breakpoint)  
-3. 重新整理頁面 → 程式會在該行停下  
-4. 使用上方工具列控制程式流程：  
-   - ▶️ Continue：繼續執行  
-   - ⏭ Step over：逐行執行  
-   - ⏬ Step into：進入函式內部  
+1. 開啟 Source 面板，選取要除錯的檔案
+2. 點擊行號 → 新增斷點 (Breakpoint)
+3. 重新整理頁面 → 程式會在該行停下
+4. 使用上方工具列控制程式流程：
+   - ▶️ Continue：繼續執行
+   - ⏭ Step over：逐行執行
+   - ⏬ Step into：進入函式內部
    - ⏫ Step out：跳出函式
 ---
 
@@ -233,25 +232,25 @@ Network 篇
 
 # 常見應用場景
 
-- **API 除錯**：檢查 Request/Response 是否正確  
-- **效能分析**：找出載入最慢的資源  
+- **API 除錯**：檢查 Request/Response 是否正確
+- **效能分析**：找出載入最慢的資源
 - **資源確認**：圖片、CSS、JS 是否載入成功
 
 ---
 
 # 過濾與搜尋
 
-- 可依 **檔案類型** 篩選：JS、CSS、Img、XHR、WS 等  
-- 搜尋特定 Request (支援正規表達式)  
-- 查看範圍內的請求  
+- 可依 **檔案類型** 篩選：JS、CSS、Img、XHR、WS 等
+- 搜尋特定 Request
+- 查看範圍內的請求
 
 ---
 
 # 小結
 
-- **Network 面板** = API 與效能除錯必備工具  
-- 熟悉 Headers / Response / Timing 三大區塊  
-- 搭配 Console 與 Source → 掌握前端問題  
+- **Network 面板** = API 與效能除錯必備工具
+- 熟悉 Headers / Response / Timing 三大區塊
+- 搭配 Console 與 Source → 掌握前端問題
 
 ---
 layout: cover
