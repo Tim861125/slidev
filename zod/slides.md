@@ -36,7 +36,7 @@ A TypeScript-first schema declaration and validation library
 
 <div grid="~ cols-2 gap-4">
 
-<div>
+<div v-click>
 
 ## The Problem
 
@@ -58,7 +58,7 @@ const data = await fetch('/api/user')
 
 </div>
 
-<div>
+<div v-click>
 
 ## The Solution
 
@@ -84,96 +84,7 @@ const user = UserSchema.parse(data);
 
 # Interactive Demo
 
-Try it yourself! See the difference between TypeScript-only and Zod validation.
-
 <ZodDemo />
-
----
-
-# Core Features Overview
-
-<div grid="~ cols-2 gap-4">
-
-<div>
-
-## Type Inference
-
-Automatically infer TypeScript types from schemas
-
-```ts
-const User = z.object({
-  name: z.string(),
-  email: z.string().email()
-});
-
-type User = z.infer<typeof User>;
-// { name: string; email: string }
-```
-
-</div>
-
-<div>
-
-## Detailed Error Messages
-
-Clear validation error information
-
-```ts
-const result = User.safeParse({
-  name: 123,
-  email: 'invalid'
-});
-
-if (!result.success) {
-  console.log(result.error.issues);
-  // Detailed error paths and messages
-}
-```
-
-</div>
-
-</div>
-
----
-
-# Core Features (continued)
-
-<div grid="~ cols-2 gap-4">
-
-<div>
-
-## Data Transformation
-
-Transform data during validation
-
-```ts
-const DateSchema = z
-  .string()
-  .transform((str) => new Date(str));
-
-DateSchema.parse("2024-01-01");
-// Returns Date object
-```
-
-</div>
-
-<div>
-
-## Defensive Programming
-
-Validate external data at boundaries
-
-```ts
-// API input validation
-app.post('/user', (req, res) => {
-  const user = UserSchema.parse(req.body);
-  // user is type-safe
-});
-```
-
-</div>
-
-</div>
 
 ---
 
@@ -182,8 +93,6 @@ app.post('/user', (req, res) => {
 <div grid="~ cols-2 gap-4">
 
 <div>
-
-## Primitive Types
 
 ```ts
 import { z } from 'zod';
@@ -209,8 +118,6 @@ z.boolean()
 </div>
 
 <div>
-
-## Advanced Types
 
 ```ts
 // Date
