@@ -1,78 +1,3 @@
-<script setup lang="ts">
-import { ref } from "vue";
-import { z } from "zod";
-
-const UserSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  age: z
-    .number()
-    .min(0, "Age must be positive")
-    .max(150, "Age must be realistic"),
-});
-
-const name = ref("");
-const age = ref("");
-
-const validationResult = ref<{
-  success: boolean;
-  error?: string;
-  data?: any;
-} | null>(null);
-
-const validateWithoutZod = () => {
-  try {
-    const data = {
-      name: name.value,
-      age: age.value ? Number(age.value) : age.value,
-    } as {
-      name: string;
-      age: number;
-    };
-    validationResult.value = {
-      success: true,
-      data,
-      error: "TypeScript allows this! But runtime type is NOT guaranteed.",
-    };
-  } catch (error: any) {
-    validationResult.value = { success: false, error: error.message };
-  }
-};
-
-const validateWithZod = () => {
-  const inputData = {
-    name: name.value,
-    age: age.value ? Number(age.value) : age.value,
-  };
-  const result = UserSchema.safeParse(inputData);
-  if (result.success) {
-    validationResult.value = { success: true, data: result.data };
-  } else {
-    validationResult.value = {
-      success: false,
-      error: result.error.issues
-        .map((e) => `${e.path.join(".")}: ${e.message}`)
-        .join("\n"),
-    };
-  }
-};
-
-const clearForm = () => {
-  name.value = "";
-  age.value = "";
-  validationResult.value = null;
-};
-const setInvalidData = () => {
-  name.value = "";
-  age.value = "-5";
-  validationResult.value = null;
-};
-const setValidData = () => {
-  name.value = "John Doe";
-  age.value = "25";
-  validationResult.value = null;
-};
-</script>
-
 <template>
   <div class="zod-demo">
     <div class="demo-container">
@@ -116,11 +41,12 @@ const setValidData = () => {
           }"
         >
           <h4>{{ validationResult.success ? "✅ Success" : "❌ Failed" }}</h4>
-          <pre>{{
-            validationResult.success
-              ? JSON.stringify(validationResult.data, null, 2)
-              : validationResult.error
+          <pre v-if="validationResult.success">{{
+            JSON.stringify(validationResult.data, null, 2)
           }}</pre>
+          <p v-else class="error-message">
+            Check console (F12) for error details
+          </p>
         </div>
       </div>
     </div>
@@ -138,6 +64,84 @@ const UserSchema = z.object({
     </div>
   </div>
 </template>
+<script setup lang="ts">
+import { ref } from "vue";
+import { z } from "zod";
+
+const UserSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  age: z
+    .number()
+    .min(0, "Age must be positive")
+    .max(150, "Age must be realistic"),
+});
+
+const name = ref("");
+const age = ref("");
+
+const validationResult = ref<{
+  success: boolean;
+  error?: string;
+  data?: any;
+} | null>(null);
+
+const validateWithoutZod = () => {
+  try {
+    const data = {
+      name: name.value,
+      age: age.value ? Number(age.value) : age.value,
+    } as {
+      name: string;
+      age: number;
+    };
+    console.log("✅ Without Zod - Data:", data);
+    console.warn(
+      "⚠️ TypeScript allows this! But runtime type is NOT guaranteed."
+    );
+    validationResult.value = {
+      success: true,
+      data,
+    };
+  } catch (error: any) {
+    console.error("❌ Without Zod - Error:", error.message);
+    validationResult.value = { success: false };
+  }
+};
+
+const validateWithZod = () => {
+  const inputData = {
+    name: name.value,
+    age: age.value ? Number(age.value) : age.value,
+  };
+  const result = UserSchema.safeParse(inputData);
+  if (result.success) {
+    console.log("Zod Validation Success:", result.data);
+    validationResult.value = { success: true, data: result.data };
+  } else {
+    console.error("Zod Validation Failed:");
+    result.error.issues.forEach((issue) => {
+      console.error(`  - ${issue.path.join(".")}: ${issue.message}`);
+    });
+    validationResult.value = { success: false };
+  }
+};
+
+const clearForm = () => {
+  name.value = "";
+  age.value = "";
+  validationResult.value = null;
+};
+const setInvalidData = () => {
+  name.value = "";
+  age.value = "-5";
+  validationResult.value = null;
+};
+const setValidData = () => {
+  name.value = "John Doe";
+  age.value = "25";
+  validationResult.value = null;
+};
+</script>
 
 <style scoped>
 .zod-demo {
@@ -281,5 +285,12 @@ label {
   border-radius: 4px;
   font-size: 0.7rem;
   border-left: 3px solid #3b82f6;
+}
+
+.error-message {
+  color: #fca5a5;
+  font-style: italic;
+  margin: 0;
+  padding: 0.3rem 0;
 }
 </style>
