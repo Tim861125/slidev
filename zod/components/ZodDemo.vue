@@ -25,10 +25,13 @@
       <div class="validation-section">
         <div class="button-group">
           <button @click="validateWithoutZod" class="btn btn-danger">
-            ❌ No Zod
+            No Zod
           </button>
-          <button @click="validateWithZod" class="btn btn-success">
-            ✅ Zod
+          <button @click="validateWithZodSafeParse" class="btn btn-success">
+            Zod safeParse
+          </button>
+          <button @click="validateWithZodParse" class="btn btn-info">
+            Zod parse
           </button>
         </div>
 
@@ -40,12 +43,11 @@
             error: !validationResult.success,
           }"
         >
-          <h4>{{ validationResult.success ? "✅ Success" : "❌ Failed" }}</h4>
           <pre v-if="validationResult.success">{{
             JSON.stringify(validationResult.data, null, 2)
           }}</pre>
-          <p v-else class="error-message">
-            Check console (F12) for error details
+          <p v-else class="console-hint">
+            💡 Press F12 to see detailed error messages in console
           </p>
         </div>
       </div>
@@ -83,6 +85,7 @@ const validationResult = ref<{
   success: boolean;
   error?: string;
   data?: any;
+  errors?: Array<{ path: string; message: string }>;
 } | null>(null);
 
 const validateWithoutZod = () => {
@@ -94,10 +97,6 @@ const validateWithoutZod = () => {
       name: string;
       age: number;
     };
-    console.log("✅ Without Zod - Data:", data);
-    console.warn(
-      "⚠️ TypeScript allows this! But runtime type is NOT guaranteed."
-    );
     validationResult.value = {
       success: true,
       data,
@@ -108,22 +107,22 @@ const validateWithoutZod = () => {
   }
 };
 
-const validateWithZod = () => {
+const validateWithZodSafeParse = () => {
   const inputData = {
     name: name.value,
     age: age.value ? Number(age.value) : age.value,
   };
   const result = UserSchema.safeParse(inputData);
-  if (result.success) {
-    console.log("Zod Validation Success:", result.data);
-    validationResult.value = { success: true, data: result.data };
-  } else {
-    console.error("Zod Validation Failed:");
-    result.error.issues.forEach((issue) => {
-      console.error(`  - ${issue.path.join(".")}: ${issue.message}`);
-    });
-    validationResult.value = { success: false };
-  }
+  console.log(result.error?.message);
+};
+
+const validateWithZodParse = () => {
+  const inputData = {
+    name: name.value,
+    age: age.value ? Number(age.value) : age.value,
+  };
+  const result = UserSchema.parse(inputData);
+  console.log(result);
 };
 
 const clearForm = () => {
@@ -251,6 +250,11 @@ label {
   color: #ffe4e6;
 }
 
+.btn-info {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: #dbeafe;
+}
+
 .result-box {
   margin-top: 0.4rem;
   padding: 0.4rem;
@@ -292,5 +296,33 @@ label {
   font-style: italic;
   margin: 0;
   padding: 0.3rem 0;
+}
+
+.error-item {
+  margin: 0.3rem 0;
+  padding: 0.3rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+  border-left: 2px solid #ef4444;
+}
+
+.error-path {
+  color: #fbbf24;
+  font-weight: 600;
+  margin-right: 0.3rem;
+}
+
+.error-text {
+  color: #fca5a5;
+}
+
+.console-hint {
+  color: #93c5fd;
+  font-style: italic;
+  margin: 0.4rem 0 0 0;
+  padding: 0.3rem;
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: 3px;
+  font-size: 0.6rem;
 }
 </style>
