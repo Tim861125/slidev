@@ -10,7 +10,6 @@ highlighter: shiki
 transition: slide-left
 mdc: true
 ---
-
 # Zod
 
 TypeScript-first Schema Validation Library
@@ -95,8 +94,6 @@ const user = UserSchema.parse(data);
 <div>
 
 ```ts
-import { z } from 'zod';
-
 // String
 z.string()
 z.string().min(3).max(100)
@@ -297,7 +294,7 @@ const result = await asyncSchema
 
 # Error Handling
 
-```ts {1-8|10-15|17-24}
+```ts
 const UserSchema = z.object({
   email: z.string().email(),
   age: z.number().min(18),
@@ -345,9 +342,10 @@ if (!result.success) {
 ```
 
 ---
+
 layout: center
 class: text-center
----
+------------------
 
 # Zod v4 Major Improvements
 
@@ -567,8 +565,9 @@ z.object({
 </div>
 
 ---
+
 layout: center
----
+--------------
 
 # Real-World Use Cases
 
@@ -578,7 +577,7 @@ Integrating Zod into actual projects
 
 # Case 1: API Route Validation (Express)
 
-```ts {1-8|10-12|14-23}
+```ts
 import express from 'express';
 import { z } from 'zod';
 
@@ -621,7 +620,7 @@ app.post('/users', async (req, res) => {
 
 # Case 2: Form Validation (React)
 
-```tsx {1-8|10-11|13-18}
+```tsx
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -671,7 +670,7 @@ function RegistrationForm() {
 
 # Case 3: Environment Variables
 
-```ts {1-10|12-14|16-24}
+```ts
 // env.ts
 import { z } from 'zod';
 
@@ -714,7 +713,7 @@ console.log(env.UNKNOWN);      // Compile error
 
 # Case 4: API Response Validation
 
-```ts {1-15|17-19|21-28}
+```ts
 // schemas/user.ts
 import { z } from 'zod';
 
@@ -767,7 +766,7 @@ result.users.forEach(user => {
 
 # Case 5: Complex Business Logic
 
-```ts {1-11|13-18}
+```ts
 import { z } from 'zod';
 
 // Order Schema - Complex business rules
@@ -792,7 +791,7 @@ const OrderSchema = z.object({
 
 # Case 5: Complex Business Logic (2)
 
-```ts {1-10|12-19}
+```ts
   discount: z.number().min(0).max(100).optional(),
 
   paymentMethod: z.enum(['credit_card', 'paypal', 'bank_transfer']),
@@ -818,7 +817,7 @@ const OrderSchema = z.object({
 
 # Case 5: Complex Business Logic (3)
 
-```ts {1-11}
+```ts
   message: 'Credit card payment requires card info',
   path: ['creditCard'],
 }).refine((data) => {
@@ -939,6 +938,7 @@ const UserSchema = BaseUserSchema
 **Problem:** Large object/array validation is slow
 
 **Solution:**
+
 ```ts
 // Use lazy for recursive validation
 const CategorySchema: z.ZodType<Category> =
@@ -960,6 +960,7 @@ const PartialUpdate = UserSchema
 ## Challenge 2: Circular References
 
 **Solution:**
+
 ```ts
 type Node = {
   value: string;
@@ -988,6 +989,7 @@ const NodeSchema: z.ZodType<Node> =
 ## Challenge 3: Integration
 
 **Strategy:**
+
 1. Gradual adoption
 2. Start with new features
 3. Critical paths first
@@ -1012,6 +1014,7 @@ const user = validate(UserSchema, apiData);
 ## Challenge 4: Bundle Size
 
 **Optimization:**
+
 ```ts
 // Import only what you need
 import { z } from 'zod';
@@ -1028,17 +1031,17 @@ import { z } from 'zod';
 
 # Comparison with Other Libraries
 
-| Feature | Zod | Yup | Joi | io-ts |
-|---------|-----|-----|-----|-------|
-| TypeScript First | ✅ | ⚠️ | ❌ | ✅ |
-| Zero Dependencies | ✅ | ❌ | ❌ | ❌ |
-| Bundle Size (min+gzip) | ~13kb | ~18kb | ~45kb | ~8kb |
-| Type Inference | ✅ Excellent | ⚠️ OK | ❌ | ✅ |
-| API Ease of Use | ✅ | ✅ | ✅ | ⚠️ |
-| Async Validation | ✅ | ✅ | ✅ | ❌ |
-| Transformations | ✅ | ✅ | ✅ | ⚠️ |
-| Error Messages | ✅ Detailed | ✅ | ✅ | ⚠️ |
-| Performance | ✅ Fast | ⚠️ Medium | ⚠️ Medium | ✅ Fast |
+| Feature                | Zod          | Yup         | Joi         | io-ts   |
+| ---------------------- | ------------ | ----------- | ----------- | ------- |
+| TypeScript First       | ✅           | ⚠️        | ❌          | ✅      |
+| Zero Dependencies      | ✅           | ❌          | ❌          | ❌      |
+| Bundle Size (min+gzip) | ~13kb        | ~18kb       | ~45kb       | ~8kb    |
+| Type Inference         | ✅ Excellent | ⚠️ OK     | ❌          | ✅      |
+| API Ease of Use        | ✅           | ✅          | ✅          | ⚠️    |
+| Async Validation       | ✅           | ✅          | ✅          | ❌      |
+| Transformations        | ✅           | ✅          | ✅          | ⚠️    |
+| Error Messages         | ✅ Detailed  | ✅          | ✅          | ⚠️    |
+| Performance            | ✅ Fast      | ⚠️ Medium | ⚠️ Medium | ✅ Fast |
 
 ---
 
@@ -1148,9 +1151,10 @@ type Custom = z.infer<typeof customString>;
 </div>
 
 ---
+
 layout: center
 class: text-center
----
+------------------
 
 # Summary
 
@@ -1165,16 +1169,17 @@ class: text-center
 ## Zod's Advantages
 
 1. **Type Safety**
+
    - TypeScript-first design
    - Excellent type inference
    - Compile + runtime protection
-
 2. **Developer Experience**
+
    - Intuitive API
    - Detailed error messages
    - Zero dependencies, lightweight
-
 3. **Feature Complete**
+
    - Rich validators
    - Data transformation
    - Async support
@@ -1186,6 +1191,7 @@ class: text-center
 ## Use Cases
 
 ✅ **Highly Recommended**
+
 - TypeScript projects
 - API development (frontend/backend)
 - Form validation
@@ -1193,6 +1199,7 @@ class: text-center
 - External data validation
 
 ⚠️ **Evaluate Carefully**
+
 - Minimal projects (might be over-engineering)
 - Pure JavaScript projects
 - Extreme focus on bundle size
@@ -1252,9 +1259,10 @@ class: text-center
 </div>
 
 ---
+
 layout: end
 class: text-center
----
+------------------
 
 # Thank You!
 
