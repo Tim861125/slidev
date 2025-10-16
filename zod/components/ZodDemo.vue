@@ -34,22 +34,6 @@
             Zod parse
           </button>
         </div>
-
-        <div
-          v-if="validationResult"
-          class="result-box"
-          :class="{
-            success: validationResult.success,
-            error: !validationResult.success,
-          }"
-        >
-          <pre v-if="validationResult.success">{{
-            JSON.stringify(validationResult.data, null, 2)
-          }}</pre>
-          <p v-else class="console-hint">
-            💡 Press F12 to see detailed error messages in console
-          </p>
-        </div>
       </div>
     </div>
 
@@ -101,6 +85,7 @@ const validateWithoutZod = () => {
       success: true,
       data,
     };
+    console.log(`name: ${data.name}\n age: ${data.age}`);
   } catch (error: any) {
     console.error("❌ Without Zod - Error:", error.message);
     validationResult.value = { success: false };
@@ -128,17 +113,14 @@ const validateWithZodParse = () => {
 const clearForm = () => {
   name.value = "";
   age.value = "";
-  validationResult.value = null;
 };
 const setInvalidData = () => {
   name.value = "";
   age.value = "-5";
-  validationResult.value = null;
 };
 const setValidData = () => {
   name.value = "John Doe";
   age.value = "25";
-  validationResult.value = null;
 };
 </script>
 
@@ -255,25 +237,6 @@ label {
   color: #dbeafe;
 }
 
-.result-box {
-  margin-top: 0.4rem;
-  padding: 0.4rem;
-  border-radius: 5px;
-  font-size: 0.65rem;
-  max-height: 105px;
-  overflow-y: auto;
-}
-
-.result-box.success {
-  background: rgba(22, 163, 74, 0.15);
-  border: 1px solid #22c55e;
-}
-
-.result-box.error {
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid #ef4444;
-}
-
 .schema-display {
   margin-top: 0.4rem;
   background: rgba(30, 41, 59, 0.6);
@@ -289,40 +252,5 @@ label {
   border-radius: 4px;
   font-size: 0.7rem;
   border-left: 3px solid #3b82f6;
-}
-
-.error-message {
-  color: #fca5a5;
-  font-style: italic;
-  margin: 0;
-  padding: 0.3rem 0;
-}
-
-.error-item {
-  margin: 0.3rem 0;
-  padding: 0.3rem;
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 3px;
-  border-left: 2px solid #ef4444;
-}
-
-.error-path {
-  color: #fbbf24;
-  font-weight: 600;
-  margin-right: 0.3rem;
-}
-
-.error-text {
-  color: #fca5a5;
-}
-
-.console-hint {
-  color: #93c5fd;
-  font-style: italic;
-  margin: 0.4rem 0 0 0;
-  padding: 0.3rem;
-  background: rgba(59, 130, 246, 0.1);
-  border-radius: 3px;
-  font-size: 0.6rem;
 }
 </style>

@@ -81,7 +81,7 @@ const user = UserSchema.parse(data);
 
 ---
 
-# Interactive Demo
+# safeParse() parse()
 
 <ZodDemo />
 
@@ -188,50 +188,6 @@ z.tuple([z.string(), z.number(), z.boolean()])
 
 ---
 
-# Complex Validation
-
-```ts
-// Union types
-const StringOrNumber = z.union([z.string(), z.number()])
-const Result = z.string().or(z.number())  // Shorthand
-
-// Discriminated Union
-const Response = z.discriminatedUnion('status', [
-  z.object({ status: z.literal('success'), data: z.any() }),
-  z.object({ status: z.literal('error'), error: z.string() }),
-])
-
-// Intersection
-const BaseUser = z.object({ id: z.number() })
-const NamedEntity = z.object({ name: z.string() })
-const User = BaseUser.and(NamedEntity)
-
-// Record - key-value pairs
-z.record(z.string(), z.number())  // { [key: string]: number }
-```
-
----
-
-# Conditional Validation
-
-```ts
-const ConditionalSchema = z.object({
-  type: z.enum(['personal', 'business']),
-  taxId: z.string().optional(),
-}).refine((data) => {
-  // Business accounts require taxId
-  if (data.type === 'business') {
-    return data.taxId !== undefined;
-  }
-  return true;
-}, {
-  message: "Business accounts require taxId",
-  path: ["taxId"],
-});
-```
-
----
-
 # Validation Methods
 
 <div grid="~ cols-2 gap-4">
@@ -291,61 +247,9 @@ const result = await asyncSchema
 </div>
 
 ---
-
-# Error Handling
-
-```ts
-const UserSchema = z.object({
-  email: z.string().email(),
-  age: z.number().min(18),
-});
-
-const result = UserSchema.safeParse({
-  email: "invalid-email",
-  age: 15,
-});
-
-if (!result.success) {
-  const error = result.error;
-
-  // Complete error information
-  console.log(error.issues);
-}
-```
-
----
-
-# Error Details
-
-```ts
-// Error issues array
-[
-  {
-    code: 'invalid_string',
-    validation: 'email',
-    path: ['email'],
-    message: 'Invalid email'
-  },
-  {
-    code: 'too_small',
-    minimum: 18,
-    path: ['age'],
-    message: 'Number must be greater than or equal to 18'
-  }
-]
-
-// Formatted output
-{
-  email: { _errors: ['Invalid email'] },
-  age: { _errors: ['Number must be greater than or equal to 18'] }
-}
-```
-
----
-
 layout: center
 class: text-center
-------------------
+---
 
 # Zod v4 Major Improvements
 
