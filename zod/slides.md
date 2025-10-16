@@ -18,16 +18,11 @@ TypeScript-first Schema Validation Library
 
 # What is Zod?
 
-A TypeScript-first schema declaration and validation library
+
 
 <br>
 
-## Core Features
-
-- **Type Safety First** - Fully leverages TypeScript's type system
-- **Zero Dependencies** - Lightweight design
-- **Great DX** - Intuitive and clean API
-- **Runtime Validation** - Complements TypeScript's compile-time checking
+- A TypeScript-first schema declaration and validation library
 
 ---
 
@@ -35,11 +30,11 @@ A TypeScript-first schema declaration and validation library
 
 <div grid="~ cols-2 gap-4">
 
-<div v-click>
+<div>
 
 ## The Problem
 
-```ts
+```ts {1-5|7-13}
 // TypeScript only checks at compile time
 interface User {
   name: string;
@@ -224,15 +219,6 @@ if (result.success) {
 ## Async Validation
 
 ```ts
-const asyncSchema = z.string().refine(
-  async (val) => {
-    // Simulate API check
-    const exists = await checkUserExists(val);
-    return !exists;
-  },
-  { message: "Username already taken" }
-);
-
 // Use parseAsync
 const username = await asyncSchema
   .parseAsync("john");
@@ -283,868 +269,349 @@ Key updates from v3 to v4
 
 - Core code size reduced by **~15%**
 - Better tree-shaking support
-- Separated optional features
 
 </div>
 
 </div>
 
 ---
+layout: two-cols
+---
 
-# Better Type Inference
+# Performance
 
-<div grid="~ cols-2 gap-4">
+Comprehensive performance optimizations
 
-<div>
+::right::
 
-## v3 Limitations
+<v-clicks>
 
-```ts
-// v3 - Deep nesting could fail
-const deep = z.object({
-  a: z.object({
-    b: z.object({
-      c: z.string()
-    })
-  })
-});
-type Deep = z.infer<typeof deep>;
-// Type might be too complex
-```
+### Runtime Speed
 
-</div>
+- **String parsing** 14x faster
+- **Array parsing** 7x faster  
+- **Object parsing** 6.5x faster
 
-<div>
+<br>
 
-## v4 Improvements
+### Compilation Performance
 
-```ts
-// v4 - Better deep type inference
-// Supports more complex recursive structures
-// Fewer "Type instantiation is
-// excessively deep" errors
-```
+- Chaining `.extend()` & `.omit()`
+  - v3: 4000ms
+  - v4: 400ms (10x faster)
 
-</div>
-
-</div>
+</v-clicks>
 
 ---
 
-# New API Features
+# 📦 Bundle Size Optimization
 
-## 1. Pipe API
+Three options for different needs
 
+| Version | Gzip Size | vs v3 |
+|---------|-----------|-------|
+| Zod v3 | 12.47 kb | - |
+| Zod v4 (regular) | 5.36 kb | **-57%** |
+| Zod v4 (mini) | 1.88 kb | **-85%** |
+
+<v-click>
+
+### Zod Mini - Functional API
 ```ts
-// v4 new - More elegant data transformation chains
-const schema = z.string()
-  .pipe(z.coerce.number())
-  .pipe(z.number().positive());
+// Regular Zod
+z.string().email().optional()
 
-schema.parse("123");  // 123 (number)
+// Zod Mini (better tree-shaking)
+optional(email(string()))
 ```
 
-## 2. Improved Error Customization
+</v-click>
 
+---
+layout: two-cols
+---
+
+# New Schema Types
+
+More practical validation types
+
+::right::
+
+<v-clicks>
+
+### Basic Types
 ```ts
-// v4 - More powerful error message customization
-const schema = z.string({
-  required_error: "Name is required",
-  invalid_type_error: "Name must be a string",
-});
+// File validation
+z.file()
 
-// Function-based custom messages
-z.string().min(3, (val) => `${val} is too short, need at least 3 characters`);
+// Template literals
+z.templateLiteral`user_${z.string()}`
+
+// Environment boolean
+z.stringbool()
 ```
+
+### Number Formats
+```ts
+z.int8()    // -128 to 127
+z.uint32()  // 0 to 4,294,967,295
+z.float32() // 32-bit float
+z.float64() // 64-bit float
+```
+
+### BigInt Formats
+```ts
+z.int64()   // 64-bit integer
+z.uint64()  // unsigned 64-bit
+```
+
+</v-clicks>
 
 ---
 
-# Coercion Enhancement
+# 🎯 Recursive Object Support
 
-```ts
-// v4 - Built-in type coercion
-z.coerce.string()    // Force to string
-z.coerce.number()    // Force to number
-z.coerce.boolean()   // Force to boolean
-z.coerce.date()      // Force to date
+No more type casting required!
 
-// Examples
-z.coerce.number().parse("123");   // 123
-z.coerce.boolean().parse("true"); // true
-```
-
----
-
-# Brand Types & Readonly
-
-<div grid="~ cols-2 gap-4">
-
-<div>
-
-## Brand Types
-
-```ts
-// v4 - Improved brand type support
-const UserId = z.string().brand<"UserId">();
-const Email = z.string().email().brand<"Email">();
-
-type UserId = z.infer<typeof UserId>;
-type Email = z.infer<typeof Email>;
-
-// Type-level distinction
-function getUser(id: UserId) { /* ... */ }
-
-const email: Email =
-  Email.parse("test@example.com");
-// getUser(email); // Type error
-```
-
-</div>
-
-<div>
-
-## Readonly Support
-
-```ts
-// v4 - Built-in readonly support
-const schema = z.object({
-  name: z.string()
-}).readonly();
-
-type T = z.infer<typeof schema>;
-// { readonly name: string }
-```
-
-</div>
-
-</div>
-
----
-
-# Catch & SuperRefine
-
-<div grid="~ cols-2 gap-4">
-
-<div>
-
-## Catch with Defaults
-
-```ts
-// v4 - More flexible error handling
-const schema = z.string().catch("default");
-
-schema.parse(123);  // "default"
-
-// Dynamic defaults
-z.string().catch((ctx) => {
-  console.log(ctx.error);
-  return "fallback";
-});
-```
-
-</div>
-
-<div>
-
-## SuperRefine Enhancement
-
-```ts
-// v4 - More powerful custom validation
-z.object({
-  password: z.string(),
-  confirm: z.string()
-}).superRefine((data, ctx) => {
-  if (data.password !== data.confirm) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Passwords don't match",
-      path: ["confirm"]
-    });
-  }
-});
-```
-
-</div>
-
-</div>
-
----
-
-layout: center
---------------
-
-# Real-World Use Cases
-
-Integrating Zod into actual projects
-
----
-
-# Case 1: API Route Validation (Express)
-
-```ts
-import express from 'express';
-import { z } from 'zod';
-
-const CreateUserSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-  name: z.string().min(2),
-  role: z.enum(['admin', 'user']).default('user'),
-});
-
-// Auto-infer type
-type CreateUserInput = z.infer<typeof CreateUserSchema>;
-
-const app = express();
-
-app.post('/users', async (req, res) => {
-  const result = CreateUserSchema.safeParse(req.body);
-
-  if (!result.success) {
-    return res.status(400).json({
-      error: 'Validation failed',
-      issues: result.error.format(),
-    });
-  }
-```
-
----
-
-# Case 1: API Route (continued)
-
-```ts
-  // result.data is type-safe
-  const user = await createUser(result.data);
-
-  res.json(user);
-});
-```
-
----
-
-# Case 2: Form Validation (React)
-
-```tsx
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-
-const formSchema = z.object({
-  username: z.string().min(3, 'Min 3 characters'),
-  email: z.string().email('Invalid email'),
-  age: z.coerce.number().min(18, 'Must be 18+'),
-});
-
-type FormData = z.infer<typeof formSchema>;
-
-function RegistrationForm() {
-  const { register, handleSubmit, formState: { errors } }
-    = useForm<FormData>({
-      resolver: zodResolver(formSchema),
-    });
-
-  const onSubmit = (data: FormData) => {
-    console.log(data); // Type-safe data
-  };
-```
-
----
-
-# Case 2: Form Validation (continued)
-
-```tsx
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <input {...register('username')} />
-      {errors.username && <span>{errors.username.message}</span>}
-
-      <input type="email" {...register('email')} />
-      {errors.email && <span>{errors.email.message}</span>}
-
-      <input type="number" {...register('age')} />
-      {errors.age && <span>{errors.age.message}</span>}
-
-      <button type="submit">Register</button>
-    </form>
-  );
-}
-```
-
----
-
-# Case 3: Environment Variables
-
-```ts
-// env.ts
-import { z } from 'zod';
-
-const envSchema = z.object({
-  NODE_ENV: z.enum(['development', 'production', 'test']),
-  DATABASE_URL: z.string().url(),
-  API_KEY: z.string().min(1),
-  PORT: z.coerce.number().default(3000),
-  REDIS_HOST: z.string().default('localhost'),
-  REDIS_PORT: z.coerce.number().default(6379),
-});
-
-// Validate and export
-const env = envSchema.parse(process.env);
-export default env;
-
-// Type inference
-type Env = z.infer<typeof envSchema>;
-// {
-//   NODE_ENV: 'development' | 'production' | 'test';
-//   DATABASE_URL: string;
-//   API_KEY: string;
-//   ...
-// }
-```
-
----
-
-# Case 3: Using Environment Variables
-
-```ts
-// Usage with full type safety
-import env from './env';
-
-console.log(env.DATABASE_URL); // Type-safe
-console.log(env.UNKNOWN);      // Compile error
-```
-
----
-
-# Case 4: API Response Validation
-
-```ts
-// schemas/user.ts
-import { z } from 'zod';
-
-export const UserSchema = z.object({
-  id: z.number(),
-  email: z.string().email(),
+<v-clicks>
+```ts {all|1-4|6-10|all}
+// ✅ v4: Native support
+const category = z.object({
   name: z.string(),
-  avatar: z.string().url().optional(),
-  createdAt: z.string().transform((str) => new Date(str)),
+  subcategories: z.lazy(() => z.array(category))
 });
 
-export const UsersResponseSchema = z.object({
-  users: z.array(UserSchema),
-  total: z.number(),
-  page: z.number(),
-});
-
-// Auto-infer types
-export type User = z.infer<typeof UserSchema>;
-export type UsersResponse = z.infer<typeof UsersResponseSchema>;
-
-// api/users.ts
-async function fetchUsers(page: number): Promise<UsersResponse> {
-  const response = await fetch(`/api/users?page=${page}`);
-  const json = await response.json();
-
-  // Validate API response
-  const data = UsersResponseSchema.parse(json);
-```
-
----
-
-# Case 4: API Response (continued)
-
-```ts
-  // data.users[0].createdAt is already a Date object
-  return data;
-}
-
-// Usage
-const result = await fetchUsers(1);
-result.users.forEach(user => {
-  console.log(user.name);                    // string
-  console.log(user.createdAt);               // Date
-  console.log(user.createdAt.getFullYear()); // Method available
+// Mutually recursive works too
+const person: z.ZodType<Person> = z.object({
+  name: z.string(),
+  friends: z.lazy(() => z.array(person))
 });
 ```
 
----
-
-# Case 5: Complex Business Logic
-
-```ts
-import { z } from 'zod';
-
-// Order Schema - Complex business rules
-const OrderSchema = z.object({
-  items: z.array(
-    z.object({
-      productId: z.string().uuid(),
-      quantity: z.number().int().positive(),
-      price: z.number().positive(),
-    })
-  ).min(1, 'Order must have at least one item'),
-
-  shippingAddress: z.object({
-    street: z.string().min(1),
-    city: z.string().min(1),
-    postalCode: z.string().regex(/^\d{5}$/, 'Invalid postal code'),
-    country: z.string().length(2, 'Use ISO country code'),
-  }),
-```
-
----
-
-# Case 5: Complex Business Logic (2)
-
-```ts
-  discount: z.number().min(0).max(100).optional(),
-
-  paymentMethod: z.enum(['credit_card', 'paypal', 'bank_transfer']),
-
-  // Credit card info - conditionally required
-  creditCard: z.object({
-    number: z.string().regex(/^\d{16}$/),
-    cvv: z.string().regex(/^\d{3,4}$/),
-    expiryMonth: z.number().min(1).max(12),
-    expiryYear: z.number().min(new Date().getFullYear()),
-  }).optional(),
-
-}).refine((data) => {
-  // If using credit card, must provide card info
-  if (data.paymentMethod === 'credit_card') {
-    return data.creditCard !== undefined;
-  }
-  return true;
-}, {
-```
-
----
-
-# Case 5: Complex Business Logic (3)
-
-```ts
-  message: 'Credit card payment requires card info',
-  path: ['creditCard'],
-}).refine((data) => {
-  // Total amount validation
-  const total = data.items.reduce((sum, item) =>
-    sum + (item.price * item.quantity), 0
-  );
-  return total > 0;
-}, {
-  message: 'Order total must be greater than 0',
-});
-
-type Order = z.infer<typeof OrderSchema>;
-```
-
----
-
-# Best Practices
-
-<div grid="~ cols-2 gap-4">
-
-<div>
-
-## 1. Validate at Boundaries
-
-- API endpoints
-- External data sources
-- User inputs
-
-## 2. Centralize Schemas
-
-```ts
-// schemas/index.ts
-export const schemas = {
-  user: UserSchema,
-  post: PostSchema,
-  comment: CommentSchema,
-};
-```
-
+<div v-click class="mt-4 p-4 bg-green-500/10 rounded">
+Full <code>ZodObject</code> instance with all methods available
 </div>
 
-<div>
-
-## 3. Use z.infer to Avoid Duplication
-
-```ts
-// Good
-const User = z.object({...});
-type User = z.infer<typeof User>;
-
-// Bad - Duplicate definitions
-interface User {...}
-const UserSchema = z.object({...});
-```
-
-</div>
-
-</div>
+</v-clicks>
 
 ---
 
-# Best Practices (continued)
+# 🏷️ Metadata System
 
-<div grid="~ cols-2 gap-4">
+Strongly-typed metadata support
 
-<div>
+<v-clicks>
+```ts {all|1-4|6-10|12-15|all}
+// Global registry
+z.object({
+  email: z.email().meta({ description: "User email address" })
+});
 
-## 4. Use Transform for Data Processing
+// Custom registry
+const myRegistry = z.registry<{
+  label: string;
+  category: "public" | "private";
+}>();
 
+// Automatic JSON Schema conversion
+const jsonSchema = z.toJSONSchema(mySchema);
+// metadata automatically included in output
+```
+
+</v-clicks>
+
+---
+layout: two-cols
+---
+
+# 🔧 API Improvements
+
+More concise and consistent
+
+::right::
+
+<v-clicks>
+
+### String formats promoted to top-level
 ```ts
+// ❌ v3 (deprecated)
+z.string().email()
+
+// ✅ v4 (recommended)
+z.email()
+
+// Custom regex
+z.email({ 
+  regex: z.emailRegex.rfc5322 
+})
+```
+
+### Literal supports multiple values
+```ts
+z.literal("a", "b", "c")
+// equivalent to
+z.union([
+  z.literal("a"),
+  z.literal("b"),
+  z.literal("c")
+])
+```
+
+</v-clicks>
+
+---
+
+# 🎨 Enhanced Error Handling
+
+More user-friendly error messages
+
+<v-clicks>
+
+### Unified error parameter
+```ts
+// ❌ v3: Multiple parameters
+z.string({ 
+  required_error: "Required",
+  invalid_type_error: "Invalid type" 
+})
+
+// ✅ v4: Unified error
+z.string({ 
+  error: "Please enter a valid string" 
+})
+```
+
+### Pretty-print errors
+```ts
+const error = schema.safeParse(data).error;
+console.log(z.prettifyError(error));
+```
+
+### Internationalization
+```ts
+z.locales.setLocale("zh-TW");
+```
+
+</v-clicks>
+
+---
+
+# 🔄 Refinements Built-in
+
+More flexible method chaining
+
+<v-clicks>
+```ts {all|2-5|7-11|all}
+// ❌ v3: Cannot interleave
 z.string()
-  .transform(s => s.toLowerCase())
-  .pipe(z.string().email());
+  .min(5)
+  // .refine(...) ← Can't add here!
+  .max(10)
+
+// ✅ v4: Freely interleave
+z.string()
+  .min(5)
+  .refine(val => val.includes("@"))
+  .max(50)
 ```
 
-## 5. Error Message i18n
-
+### New method: .overwrite()
 ```ts
-import { z } from 'zod';
-import { zodI18nMap } from 'zod-i18n-map';
-import translation from
-  'zod-i18n-map/locales/zh-TW/zod.json';
-
-z.setErrorMap(zodI18nMap);
+// Transform data without changing type
+z.string().overwrite(val => val.trim())
 ```
 
-</div>
-
-<div>
-
-## 6. Build Reusable Schemas
-
-```ts
-const TimestampSchema = z.object({
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
-
-const UserSchema = BaseUserSchema
-  .merge(TimestampSchema);
-```
-
-</div>
-
-</div>
+</v-clicks>
 
 ---
 
-# Common Challenges
+# 🎯 Enhanced Discriminated Unions
 
-<div grid="~ cols-2 gap-4">
+More powerful union types
 
-<div>
+<v-clicks>
+```ts {all|2-9|11-17|all}
+// Supports unions and pipes
+const schema = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal("user", "admin"), // Multiple values!
+    name: z.string()
+  }),
+  z.object({
+    type: z.literal("guest")
+  })
+]);
 
-## Challenge 1: Performance
-
-**Problem:** Large object/array validation is slow
-
-**Solution:**
-
-```ts
-// Use lazy for recursive validation
-const CategorySchema: z.ZodType<Category> =
-  z.lazy(() => z.object({
-    name: z.string(),
-    children: z.array(CategorySchema),
-  }));
-
-// Partial validation
-const PartialUpdate = UserSchema
-  .partial()
-  .pick({ name: true, email: true });
+// Supports nesting
+const outer = z.discriminatedUnion("kind", [
+  inner, // ← Another discriminated union
+  z.object({ kind: z.literal("other") })
+]);
 ```
 
-</div>
-
-<div>
-
-## Challenge 2: Circular References
-
-**Solution:**
-
-```ts
-type Node = {
-  value: string;
-  children: Node[];
-};
-
-const NodeSchema: z.ZodType<Node> =
-  z.lazy(() => z.object({
-    value: z.string(),
-    children: z.array(NodeSchema),
-  }));
-```
-
-</div>
-
-</div>
+</v-clicks>
 
 ---
-
-# More Challenges & Solutions
-
-<div grid="~ cols-2 gap-4">
-
-<div>
-
-## Challenge 3: Integration
-
-**Strategy:**
-
-1. Gradual adoption
-2. Start with new features
-3. Critical paths first
-
-```ts
-// Wrapper function for easy migration
-function validate<T>(
-  schema: z.ZodType<T>,
-  data: unknown
-): T {
-  return schema.parse(data);
-}
-
-// Usage
-const user = validate(UserSchema, apiData);
-```
-
-</div>
-
-<div>
-
-## Challenge 4: Bundle Size
-
-**Optimization:**
-
-```ts
-// Import only what you need
-import { z } from 'zod';
-
-// Use tree-shaking
-// Ensure bundler is configured correctly
-```
-
-</div>
-
-</div>
-
----
-
-# Comparison with Other Libraries
-
-| Feature                | Zod          | Yup         | Joi         | io-ts   |
-| ---------------------- | ------------ | ----------- | ----------- | ------- |
-| TypeScript First       | ✅           | ⚠️        | ❌          | ✅      |
-| Zero Dependencies      | ✅           | ❌          | ❌          | ❌      |
-| Bundle Size (min+gzip) | ~13kb        | ~18kb       | ~45kb       | ~8kb    |
-| Type Inference         | ✅ Excellent | ⚠️ OK     | ❌          | ✅      |
-| API Ease of Use        | ✅           | ✅          | ✅          | ⚠️    |
-| Async Validation       | ✅           | ✅          | ✅          | ❌      |
-| Transformations        | ✅           | ✅          | ✅          | ⚠️    |
-| Error Messages         | ✅ Detailed  | ✅          | ✅          | ⚠️    |
-| Performance            | ✅ Fast      | ⚠️ Medium | ⚠️ Medium | ✅ Fast |
-
----
-
-# When to Choose What?
-
-## Recommendations
-
-- **New project + TypeScript**: Zod ⭐
-- **Already using Yup**: Consider migration
-- **Node.js backend**: Zod or Joi
-- **Extreme lightweight**: io-ts
-
----
-
-# Advanced Techniques
-
-<div grid="~ cols-2 gap-4">
-
-<div>
-
-## 1. Schema Composition Pattern
-
-```ts
-// Base schemas
-const Timestamps = z.object({
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
-
-const SoftDelete = z.object({
-  deletedAt: z.date().nullable(),
-});
-
-// Compose them
-const Entity = z.object({
-  id: z.string().uuid(),
-}).merge(Timestamps).merge(SoftDelete);
-```
-
-</div>
-
-<div>
-
-## 2. Preprocessor Pattern
-
-```ts
-const preprocessor = z.preprocess(
-  (val) => {
-    if (typeof val === 'string') {
-      return JSON.parse(val);
-    }
-    return val;
-  },
-  z.object({ name: z.string() })
-);
-```
-
-</div>
-
-</div>
-
----
-
-# Advanced Techniques (continued)
-
-<div grid="~ cols-2 gap-4">
-
-<div>
-
-## 3. Conditional Schema
-
-```ts
-const ConditionalSchema =
-  z.discriminatedUnion('type', [
-    z.object({
-      type: z.literal('email'),
-      email: z.string().email(),
-    }),
-    z.object({
-      type: z.literal('phone'),
-      phone: z.string().regex(/^\d{10}$/),
-    }),
-  ]);
-```
-
-</div>
-
-<div>
-
-## 4. Custom Validators
-
-```ts
-const customString =
-  z.custom<`custom-${string}`>(
-    (val) => {
-      return typeof val === 'string' &&
-             val.startsWith('custom-');
-    }
-  );
-
-type Custom = z.infer<typeof customString>;
-// `custom-${string}`
-```
-
-</div>
-
-</div>
-
----
-
 layout: center
 class: text-center
-------------------
-
-# Summary
-
 ---
 
-# Key Takeaways
+# 📊 Performance Summary
 
-<div grid="~ cols-2 gap-6">
+<div class="grid grid-cols-2 gap-8 mt-8">
 
-<div>
-
-## Zod's Advantages
-
-1. **Type Safety**
-
-   - TypeScript-first design
-   - Excellent type inference
-   - Compile + runtime protection
-2. **Developer Experience**
-
-   - Intuitive API
-   - Detailed error messages
-   - Zero dependencies, lightweight
-3. **Feature Complete**
-
-   - Rich validators
-   - Data transformation
-   - Async support
-
+<div v-click>
+<div class="text-6xl mb-4">14×</div>
+<div class="text-xl">String Parsing Speed</div>
 </div>
 
-<div>
+<div v-click>
+<div class="text-6xl mb-4">100×</div>
+<div class="text-xl">TS Compilation</div>
+</div>
 
-## Use Cases
+<div v-click>
+<div class="text-6xl mb-4">-85%</div>
+<div class="text-xl">Bundle Size (Mini)</div>
+</div>
 
-✅ **Highly Recommended**
-
-- TypeScript projects
-- API development (frontend/backend)
-- Form validation
-- Config validation
-- External data validation
-
-⚠️ **Evaluate Carefully**
-
-- Minimal projects (might be over-engineering)
-- Pure JavaScript projects
-- Extreme focus on bundle size
-
+<div v-click>
+<div class="text-6xl mb-4">9/10</div>
+<div class="text-xl">Top Issues Resolved</div>
 </div>
 
 </div>
 
 ---
-
-# v4 Improvements Summary
-
-<div grid="~ cols-2 gap-6">
-
-<div>
-
-## Performance
-
-- 2-3x faster for simple objects
-- 1.5-2x faster for complex structures
-- 30% less memory usage
-- 15% smaller bundle size
-
-</div>
-
-<div>
-
-## New Features
-
-- Pipe API for transformations
-- Enhanced coercion
-- Better brand types
-- Improved error customization
-- Stronger type inference
-
-</div>
-
-</div>
-
+layout: center
+class: text-center
 ---
 
+# 🎉 Summary
+
+<v-clicks>
+
+- ⚡️ **Performance**: 7-14x improvements across the board
+- 📦 **Size**: 57% smaller core, 85% with Mini
+- 🆕 **Features**: Recursive objects, template literals, file validation
+- 🔧 **DX**: Faster compilation, better error messages
+- 🌐 **Ecosystem**: JSON Schema, i18n, extensibility
+
+<div class="mt-8">
+Documentation: <a href="https://zod.dev" target="_blank">zod.dev</a>
+</div>
+
+</v-clicks>
+
+---
+layout: end
+---
+
+# Thanks!
+
+Migration Guide: [zod.dev/v4/changelog](https://zod.dev/v4/changelog)
+
+---
 # Learning Resources
 
 <div class="pt-8">
@@ -1166,7 +633,7 @@ class: text-center
 
 layout: end
 class: text-center
-------------------
+---
 
 # Thank You!
 
