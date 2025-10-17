@@ -593,6 +593,22 @@ More powerful union types
 <v-clicks>
 
 ```ts
+
+import { z } from 'zod';
+
+const mySchema = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('circle'), radius: z.number() }),
+  z.object({ type: z.literal('square'), size: z.number() }),
+  z.object({ type: z.literal('rectangle'), width: z.number(), height: z.number() })
+]);
+
+// ✅ 有效
+mySchema.parse({ type: 'circle', radius: 10 });
+mySchema.parse({ type: 'square', size: 5 });
+
+// ❌ 無效 - type 不匹配
+mySchema.parse({ type: 'triangle', base: 5 });
+
 const MyResult = z.discriminatedUnion("status", [
   // simple literal
   z.object({ status: z.literal("aaa"), data: z.string() }),
@@ -602,7 +618,6 @@ const MyResult = z.discriminatedUnion("status", [
   z.object({ status: z.literal("fail").transform(val => val.toUpperCase()) }),
 ]);
 
-// nested
 const BaseError = z.object({ status: z.literal("failed"), message: z.string() });
 const MyResult = z.discriminatedUnion("status", [
   z.object({ status: z.literal("success"), data: z.string() }),
