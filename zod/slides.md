@@ -253,7 +253,6 @@ Key updates from v3 to v4
 
 - **Faster validation**: Rewritten core engine
 - **Memory optimization**: ~30% reduction
-- **Lazy initialization**: Schemas built on first use
 
 ```ts
 // v4 Performance benchmarks
@@ -289,7 +288,7 @@ Comprehensive performance optimizations
 ### Runtime Speed
 
 - **String parsing** 14x faster
-- **Array parsing** 7x faster  
+- **Array parsing** 7x faster
 - **Object parsing** 6.5x faster
 
 <br>
@@ -344,11 +343,61 @@ More practical validation types
 // File validation
 z.file()
 
-// Template literals
-z.templateLiteral`user_${z.string()}`
+const fileSchema = z.file();
 
+const avatarSchema = z.file({
+  type: ["image/jpeg", "image/png", "image/webp"],
+  maxSize: 2 * 1024 * 1024,  // 2MB
+  minSize: 1024               // at least 1KB
+});
+```
+
+<br>
+
+```ts
+// Template literals
+const userIdSchema
+    = z.templateLiteral`user_${z.string()}`;
+
+userIdSchema.parse("user_123");        // v
+userIdSchema.parse("user_abc");        // v
+userIdSchema.parse("admin_123");       // x
+userIdSchema.parse("user_");           // x
+```
+</v-clicks>
+
+---
+layout: two-cols
+---
+
+# New Schema Types
+
+More practical validation types
+
+### BigInt Formats
+
+::right::
+
+<v-clicks>
+
+```ts
 // Environment boolean
-z.stringbool()
+z.stringbool()const strbool = z.stringbool();
+
+strbool.parse("true")         // => true
+strbool.parse("1")            // => true
+strbool.parse("yes")          // => true
+strbool.parse("on")           // => true
+strbool.parse("y")            // => true
+strbool.parse("enabled")      // => true
+
+strbool.parse("false");       // => false
+strbool.parse("0");           // => false
+strbool.parse("no");          // => false
+strbool.parse("off");         // => false
+strbool.parse("n");           // => false
+strbool.parse("disabled");    // => false
+
 ```
 
 ### Number Formats
@@ -359,40 +408,52 @@ z.float32() // 32-bit float
 z.float64() // 64-bit float
 ```
 
-### BigInt Formats
-```ts
-z.int64()   // 64-bit integer
-z.uint64()  // unsigned 64-bit
-```
-
 </v-clicks>
 
 ---
 
-# 🎯 Recursive Object Support
+# Recursive Object Support
 
-No more type casting required!
+<div grid="~ cols-2 gap-8">
+
+<div>
+
+```ts
+//  v3
+const category = z.object({
+  name: z.string(),
+  subcategories: z.array(category)  // X
+});
+
+// v3 need to do
+type Category = z.infer<typeof categorySchema>;
+const categorySchema: z.ZodType<Category> =
+z.lazy(() =>
+  z.object({
+    name: z.string(),
+    subcategories: z.array(categorySchema)
+  })
+);
+```
+
+</div>
+
+<div>
 
 <v-clicks>
-```ts {all|1-4|6-10|all}
-// ✅ v4: Native support
+
+```ts
+// v4: Native support
 const category = z.object({
   name: z.string(),
   subcategories: z.lazy(() => z.array(category))
 });
-
-// Mutually recursive works too
-const person: z.ZodType<Person> = z.object({
-  name: z.string(),
-  friends: z.lazy(() => z.array(person))
-});
 ```
+</v-clicks>
 
-<div v-click class="mt-4 p-4 bg-green-500/10 rounded">
-Full <code>ZodObject</code> instance with all methods available
 </div>
 
-</v-clicks>
+</div>
 
 ---
 
@@ -401,24 +462,34 @@ Full <code>ZodObject</code> instance with all methods available
 Strongly-typed metadata support
 
 <v-clicks>
-```ts {all|1-4|6-10|12-15|all}
-// Global registry
-z.object({
-  email: z.email().meta({ description: "User email address" })
+
+```ts
+const myRegistry = z.registry<{ title: string; description: string }>();
+const emailSchema = z.email();
+
+emailSchema.register(myRegistry, { title: "Email address", description: "..." })
+// => returns emailSchema
+
+const loginSchema = z.object({
+  email: z.email().register(uiRegistry, {
+    label: "Email",
+    placeholder: "example@email.com",
+    inputType: "email",
+  }),
+
+  password: z.string().min(8).register(uiRegistry, {
+    label: "Password",
+    placeholder: "At least 8 characters",
+    inputType: "password",
+  }),
 });
-
-// Custom registry
-const myRegistry = z.registry<{
-  label: string;
-  category: "public" | "private";
-}>();
-
-// Automatic JSON Schema conversion
-const jsonSchema = z.toJSONSchema(mySchema);
-// metadata automatically included in output
 ```
 
 </v-clicks>
+
+---
+
+<test />
 
 ---
 layout: two-cols
@@ -441,8 +512,8 @@ z.string().email()
 z.email()
 
 // Custom regex
-z.email({ 
-  regex: z.emailRegex.rfc5322 
+z.email({
+  regex: z.emailRegex.rfc5322
 })
 ```
 
@@ -470,26 +541,15 @@ More user-friendly error messages
 ### Unified error parameter
 ```ts
 // ❌ v3: Multiple parameters
-z.string({ 
+z.string({
   required_error: "Required",
-  invalid_type_error: "Invalid type" 
+  invalid_type_error: "Invalid type"
 })
 
 // ✅ v4: Unified error
-z.string({ 
-  error: "Please enter a valid string" 
+z.string({
+  error: "Please enter a valid string"
 })
-```
-
-### Pretty-print errors
-```ts
-const error = schema.safeParse(data).error;
-console.log(z.prettifyError(error));
-```
-
-### Internationalization
-```ts
-z.locales.setLocale("zh-TW");
 ```
 
 </v-clicks>
@@ -501,7 +561,8 @@ z.locales.setLocale("zh-TW");
 More flexible method chaining
 
 <v-clicks>
-```ts {all|2-5|7-11|all}
+
+```ts
 // ❌ v3: Cannot interleave
 z.string()
   .min(5)
@@ -518,7 +579,7 @@ z.string()
 ### New method: .overwrite()
 ```ts
 // Transform data without changing type
-z.string().overwrite(val => val.trim())
+z.number().overwrite(val => val ** 2).max(100)
 ```
 
 </v-clicks>
@@ -530,22 +591,26 @@ z.string().overwrite(val => val.trim())
 More powerful union types
 
 <v-clicks>
-```ts {all|2-9|11-17|all}
-// Supports unions and pipes
-const schema = z.discriminatedUnion("type", [
-  z.object({
-    type: z.literal("user", "admin"), // Multiple values!
-    name: z.string()
-  }),
-  z.object({
-    type: z.literal("guest")
-  })
+
+```ts
+const MyResult = z.discriminatedUnion("status", [
+  // simple literal
+  z.object({ status: z.literal("aaa"), data: z.string() }),
+  // union discriminator
+  z.object({ status: z.union([z.literal("bbb"), z.literal("ccc")]) }),
+  // pipe discriminator
+  z.object({ status: z.literal("fail").transform(val => val.toUpperCase()) }),
 ]);
 
-// Supports nesting
-const outer = z.discriminatedUnion("kind", [
-  inner, // ← Another discriminated union
-  z.object({ kind: z.literal("other") })
+// nested
+const BaseError = z.object({ status: z.literal("failed"), message: z.string() });
+const MyResult = z.discriminatedUnion("status", [
+  z.object({ status: z.literal("success"), data: z.string() }),
+  z.discriminatedUnion("code", [
+    BaseError.extend({ code: z.literal(400) }),
+    BaseError.extend({ code: z.literal(401) }),
+    BaseError.extend({ code: z.literal(500) })
+  ])
 ]);
 ```
 
@@ -583,68 +648,17 @@ class: text-center
 </div>
 
 ---
-layout: center
-class: text-center
----
-
-# 🎉 Summary
-
-<v-clicks>
-
-- ⚡️ **Performance**: 7-14x improvements across the board
-- 📦 **Size**: 57% smaller core, 85% with Mini
-- 🆕 **Features**: Recursive objects, template literals, file validation
-- 🔧 **DX**: Faster compilation, better error messages
-- 🌐 **Ecosystem**: JSON Schema, i18n, extensibility
-
-<div class="mt-8">
-Documentation: <a href="https://zod.dev" target="_blank">zod.dev</a>
-</div>
-
-</v-clicks>
-
----
-layout: end
----
-
-# Thanks!
-
-Migration Guide: [zod.dev/v4/changelog](https://zod.dev/v4/changelog)
-
----
-# Learning Resources
-
-<div class="pt-8">
-
-## Official Resources
-
-- [Official Documentation](https://zod.dev)
-- [GitHub Repository](https://github.com/colinhacks/zod)
-- [Zod Playground](https://stackblitz.com/edit/zod-playground)
-
-## Community
-
-- [Community Discord](https://discord.gg/zod)
-- [Stack Overflow](https://stackoverflow.com/questions/tagged/zod)
-
-</div>
-
----
-
 layout: end
 class: text-center
 ---
 
-# Thank You!
-
-## Q&A
+# Thanks
 
 <div class="pt-12 text-sm opacity-75">
 
 📚 References
-
-[Zod Documentation](https://zod.dev) ·
-[GitHub](https://github.com/colinhacks/zod) ·
-[TypeScript Handbook](https://www.typescriptlang.org/docs/)
+<br>[zod.dev/v4/changelog](https://zod.dev/v4/changelog)
+<br>[Zod Documentation](https://zod.dev) ·
+<br>[GitHub](https://github.com/colinhacks/zod) ·
 
 </div>
